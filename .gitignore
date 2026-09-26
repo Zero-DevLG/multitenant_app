@@ -11,3 +11,7 @@ env/
 .env
 
 api_old/
+
+logs/
+
+uploads/

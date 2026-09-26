@@ -13,6 +13,9 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRE_MINUTES: int = 60
     
+    ENVIRONMENT: str
+    MTMAIL_ENDPOINT: str
+    
     # REDIS
     REDIS_URL: str = "redis://localhost:6379/0"
     
