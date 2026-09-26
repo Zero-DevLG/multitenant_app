@@ -1,0 +1,20 @@
+module: legal_representation
+section: Legal Title / Authority Role
+code: legal_title_authority_role
+fields:
+  - code: legal_title_authority_role
+    type: authority_role
+    required: true
+
+status_rules:
+  - when: any_required_missing
+    result: "Pending Completion"
+  - when: any_required_incorrect
+    result: "Requires Correction"
+  - when: any_required_pending_verification
+    result: "Pending Verification"
+  - when: all_required_correct
+    result: "Verified"
+
+
+module

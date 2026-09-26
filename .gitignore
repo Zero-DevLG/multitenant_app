@@ -1,0 +1,13 @@
+venv/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# carpetas de entornos virtuales
+.venv/
+venv/
+env/
+.env
+
+api_old/

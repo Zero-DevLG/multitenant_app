@@ -1,0 +1,73 @@
+module: legal_information
+code: legal_information
+status_rules:
+  - when: any_required_missing
+    result: "Pending Completion"
+  - when: any_required_incorrect
+    result: "Requires Correction"
+  - when: any_required_pending_verification
+    result: "Pending Verification"
+  - when: all_required_correct
+    result: "Verified"
+
+module: 
+code: legal_representation
+status_rules:
+  - when: any_required_missing
+    result: "Pending Completion"
+  - when: any_required_incorrect
+    result: "Requires Correction"
+  - when: any_required_pending_verification
+    result: "Pending Verification"
+  - when: all_required_correct
+    result: "Verified"
+
+
+module: 
+code: ultimate_beneficial_owners_shareholding
+status_rules:
+  - when: any_required_missing
+    result: "Pending Completion"
+  - when: any_required_incorrect
+    result: "Requires Correction"
+  - when: any_required_pending_verification
+    result: "Pending Verification"
+  - when: all_required_correct
+    result: "Verified"
+
+module: 
+code: business_information
+status_rules:
+  - when: any_required_missing
+    result: "Pending Completion"
+  - when: any_required_incorrect
+    result: "Requires Correction"
+  - when: any_required_pending_verification
+    result: "Pending Verification"
+  - when: all_required_correct
+    result: "Verified"
+
+
+module: 
+code: key_officers_management
+status_rules:
+  - when: any_required_missing
+    result: "Pending Completion"
+  - when: any_required_incorrect
+    result: "Requires Correction"
+  - when: any_required_pending_verification
+    result: "Pending Verification"
+  - when: all_required_correct
+    result: "Verified"
+
+module: 
+code: bank_accounts
+status_rules:
+  - when: any_required_missing
+    result: "Pending Completion"
+  - when: any_required_incorrect
+    result: "Requires Correction"
+  - when: any_required_pending_verification
+    result: "Pending Verification"
+  - when: all_required_correct
+    result: "Verified"

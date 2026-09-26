@@ -1,0 +1,243 @@
+module: legal_information
+section: Legal Corporate Name
+code: legal_corporate_name
+fields:
+  - code: company_name
+    type: text
+    required: true
+  - code: tax_document
+    type: file
+    required: false
+
+status_rules:
+  - when: any_required_missing
+    result: "Pending Completion"
+  - when: any_required_incorrect
+    result: "Requires Correction"
+  - when: any_required_pending_verification
+    result: "Pending Verification"
+  - when: all_required_correct
+    result: "Verified"
+
+
+
+module: legal_information
+section: Entity Type
+code: entity_type
+fields:
+  - code: entity_type
+    type: select
+    required: true
+
+status_rules:
+  - when: any_required_missing
+    result: "Pending Completion"
+  - when: any_required_incorrect
+    result: "Requires Correction"
+  - when: any_required_pending_verification
+    result: "Pending Verification"
+  - when: all_required_correct
+    result: "Verified"
+
+module: legal_information
+section: Articles of Incorporation (Original)
+code: articles_incorporation
+fields:
+  - code: upload_articles_of_incorporation_original_corporate_bylaws
+    type: file
+    required: true
+
+status_rules:
+  - when: any_required_missing
+    result: "Pending Completion"
+  - when: any_required_incorrect
+    result: "Requires Correction"
+  - when: any_required_pending_verification
+    result: "Pending Verification"
+  - when: all_required_correct
+    result: "Verified"
+
+
+module: legal_information
+section: Bylaws Amendments (Latest)
+code: bylaws_amendments
+fields:
+  - code: upload_latest_bylaws_amendment_corporate_amendment
+    type: file
+    required: true
+
+status_rules:
+  - when: any_required_missing
+    result: "Pending Completion"
+  - when: any_required_incorrect
+    result: "Requires Correction"
+  - when: any_required_pending_verification
+    result: "Pending Verification"
+  - when: all_required_correct
+    result: "Verified"
+
+
+module: legal_information
+section: Tax Identification Number (Tax ID)
+code: tax_identification_number
+fields:
+  - code: tax_id
+    type: text
+    required: true
+  - code: upload_tax_registration_certificate
+    type: file
+    required: true
+
+status_rules:
+  - when: any_required_missing
+    result: "Pending Completion"
+  - when: any_required_incorrect
+    result: "Requires Correction"
+  - when: any_required_pending_verification
+    result: "Pending Verification"
+  - when: all_required_correct
+    result: "Verified"
+
+
+module: legal_information
+section: Standard Industrial Classification / Business Activity (NAICS/ISIC)
+code: standard_industrial_classification
+fields:
+  - code: standard_industrial_classification_business_activity_naics_isic
+    type: text
+    required: true
+  - code: primary_business_activity_description
+    type: text
+    required: false
+  - code: upload_tax_cert_or_official_registration
+    type: file
+    required: true
+
+status_rules:
+  - when: any_required_missing
+    result: "Pending Completion"
+  - when: any_required_incorrect
+    result: "Requires Correction"
+  - when: any_required_pending_verification
+    result: "Pending Verification"
+  - when: all_required_correct
+    result: "Verified"
+
+
+module: legal_information
+section: Registered Business Address
+code: registered_business_address
+fields:
+  - code: street_and_building_number
+    type: text
+    required: true
+  - code: country
+    type: text
+    required: true
+  - code: state
+    type: text
+    required: true
+  - code: city
+    type: text
+    required: true
+  - code: zc
+    type: text
+    required: true
+  
+status_rules:
+  - when: any_required_missing
+    result: "Pending Completion"
+  - when: any_required_incorrect
+    result: "Requires Correction"
+  - when: any_required_pending_verification
+    result: "Pending Verification"
+  - when: all_required_correct
+    result: "Verified"
+
+
+module: legal_representation
+section: Legal Representative Full Name
+code: legal_representative_full_name
+fields:
+  - code: first_name
+    type: text
+    required: true
+  - code: middle_name
+    type: text
+    required: false
+  - code: last_name
+    type: text
+    required: true
+  
+status_rules:
+  - when: any_required_missing
+    result: "Pending Completion"
+  - when: any_required_incorrect
+    result: "Requires Correction"
+  - when: any_required_pending_verification
+    result: "Pending Verification"
+  - when: all_required_correct
+    result: "Verified"
+
+module: legal_representation
+section: Passport
+code: passport
+fields:
+  - code: upload_passport_or_government_idf
+    type: file
+    required: true
+  
+status_rules:
+  - when: any_required_missing
+    result: "Pending Completion"
+  - when: any_required_incorrect
+    result: "Requires Correction"
+  - when: any_required_pending_verification
+    result: "Pending Verification"
+  - when: all_required_correct
+    result: "Verified"
+
+
+module: legal_representation
+section: Representative Tax Identification Number (Tax ID)
+code: representative_tax_identification_number
+fields:
+  - code: personal_tax_id
+    type: text
+    required: true
+  - code: upload_personal_tax_registration_certificate_tin_document
+    type: file
+    required: true
+  
+status_rules:
+  - when: any_required_missing
+    result: "Pending Completion"
+  - when: any_required_incorrect
+    result: "Requires Correction"
+  - when: any_required_pending_verification
+    result: "Pending Verification"
+  - when: all_required_correct
+    result: "Verified"
+
+module: legal_representation
+section: Legal Title / Authority Role
+code: legal_title_authority_role
+fields:
+  - code: personal_tax_id
+    type: text
+    required: true
+  - code: upload_personal_tax_registration_certificate_tin_document
+    type: file
+    required: true
+  
+status_rules:
+  - when: any_required_missing
+    result: "Pending Completion"
+  - when: any_required_incorrect
+    result: "Requires Correction"
+  - when: any_required_pending_verification
+    result: "Pending Verification"
+  - when: all_required_correct
+    result: "Verified"
+
+
