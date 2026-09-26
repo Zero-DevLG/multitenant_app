@@ -37,21 +37,31 @@ class DefaultSectionSeeder(Seeder):
         await self._get_or_create(session, Sections, id=12, name="Official Representative Contact Email", description="", status_id=1,module_id=2, required=True, code="official_representative_contact_email")
         
         # 3
-        await self._get_or_create(session, Sections, id=13, name="add_ultimate_beneficial_owners_&_shareholding", description="", status_id=1, module_id=3, required=True )
+        await self._get_or_create(session, Sections, id=13, name="Ultimate Beneficial Owners & Shareholding", description="", status_id=1, module_id=3, required=True, code="add_ultimate_beneficial_owners_&_shareholding" )
         
         # 4 
-        await self._get_or_create(session, Sections, id=14, name="trade_brand_name", description="", status_id=1, module_id=4, required=True )
+        await self._get_or_create(session, Sections, id=14, name="Trade / Brand Name", description="", status_id=1, module_id=4, required=True, code="trade_brand_name" )
         
-        await self._get_or_create(session, Sections, id=15, name="official_brand_logo", description="", status_id=1, module_id=4, required=True )
+        await self._get_or_create(session, Sections, id=15, name="Official Brand Logo", description="", status_id=1, module_id=4, required=True, code="official_brand_logo" )
         
-        await self._get_or_create(session, Sections, id=16, name="local_tourism_board_license_certificate", description="", status_id=1, module_id=4, required=True )
+        await self._get_or_create(session, Sections, id=16, name="Local Tourism Board License / Certificate", description="", status_id=1, module_id=4, required=True, code="local_tourism_board_license_certificate" )
         
-        await self._get_or_create(session, Sections, id=17, name="business_address", description="", status_id=1, module_id=4, required=True )
+        await self._get_or_create(session, Sections, id=17,name="Business Address",  description="", status_id=1, module_id=4, required=True ,code="business_address" )
+        
+        await self._get_or_create(session, Sections, id=18,name="Operational & Commercial Escalation Phone Numbers",  description="", status_id=1, module_id=4, required=True ,code="operational_&_commercial_escalation_phone_numbers" )
+        
+        await self._get_or_create(session, Sections, id=19,name="Emails",  description="", status_id=1, module_id=4, required=True ,code="emails" )
+        
+        await self._get_or_create(session, Sections, id=20,name="Official Website",  description="", status_id=1, module_id=4, required=True ,code="official_website" )
+        
+        await self._get_or_create(session, Sections, id=21,name="Official Social Media Accounts",  description="", status_id=1, module_id=4, required=True ,code="official_social_media_accounts" )
         
         
+        # 5
+        await self._get_or_create(session, Sections, id=22,name="Key Officers & Management",  description="", status_id=1, module_id=5, required=True ,code="add_key_officers_&_management" )
         
-        
-        
+        #6
+        await self._get_or_create(session, Sections, id=23,name="Bank accounts",  description="", status_id=1, module_id=6, required=True ,code="add_bank_accounts" )
         
         await session.commit()
 
