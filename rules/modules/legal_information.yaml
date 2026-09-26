@@ -10,7 +10,7 @@ status_rules:
   - when: all_required_correct
     result: "Verified"
 
-module: 
+module: legal_representation
 code: legal_representation
 status_rules:
   - when: any_required_missing
@@ -23,7 +23,7 @@ status_rules:
     result: "Verified"
 
 
-module: 
+module: ultimate_beneficial_owners_shareholding
 code: ultimate_beneficial_owners_shareholding
 status_rules:
   - when: any_required_missing
@@ -35,7 +35,7 @@ status_rules:
   - when: all_required_correct
     result: "Verified"
 
-module: 
+module: business_information
 code: business_information
 status_rules:
   - when: any_required_missing
@@ -48,7 +48,7 @@ status_rules:
     result: "Verified"
 
 
-module: 
+module: key_officers_management
 code: key_officers_management
 status_rules:
   - when: any_required_missing
@@ -60,7 +60,7 @@ status_rules:
   - when: all_required_correct
     result: "Verified"
 
-module: 
+module: bank_accounts
 code: bank_accounts
 status_rules:
   - when: any_required_missing
