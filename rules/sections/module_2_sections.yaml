@@ -1,20 +1,444 @@
-module: legal_representation
-section: Legal Title / Authority Role
-code: legal_title_authority_role
-fields:
-  - code: legal_title_authority_role
-    type: authority_role
-    required: true
+# rules/verification_rules.yaml
+modules:
+  - code: legal_information
+    name: "Legal Information"
+    status_rules:
+      - when: any_required_missing
+        result: "Pending Completion"
+      - when: any_required_incorrect
+        result: "Requires Correction"
+      - when: any_required_pending_verification
+        result: "Pending Verification"
+      - when: all_required_correct
+        result: "Verified"
+    sections:
+      - code: legal_corporate_name
+        name: "Legal Corporate Name"
+        required: true
+        fields:
+          - code: legal_corporate_name
+            type: text
+            required: true
+          - code: upload_tax_certification_official_tax_registration
+            type: file
+            required: true
+        status_rules:
+          - when: any_required_missing
+            result: "Pending Completion"
+          - when: any_required_incorrect
+            result: "Requires Correction"
+          - when: any_required_pending_verification
+            result: "Pending Verification"
+          - when: all_required_correct
+            result: "Verified"
 
-status_rules:
-  - when: any_required_missing
-    result: "Pending Completion"
-  - when: any_required_incorrect
-    result: "Requires Correction"
-  - when: any_required_pending_verification
-    result: "Pending Verification"
-  - when: all_required_correct
-    result: "Verified"
+      - code: entity_type
+        name: "Entity Type"
+        required: true
+        fields:
+          - code: entity_type
+            type: text
+            required: true
+        status_rules:
+          - when: any_required_missing
+            result: "Pending Completion"
+          - when: any_required_incorrect
+            result: "Requires Correction"
+          - when: any_required_pending_verification
+            result: "Pending Verification"
+          - when: all_required_correct
+            result: "Verified"
 
+      - code: articles_incorporation
+        name: "Articles of Incorporation (Original)"
+        required: true
+        fields:
+          - code: upload_articles_of_incorporation_original_corporate_bylaws
+            type: file
+            required: true
+        status_rules:
+          - when: any_required_missing
+            result: "Pending Completion"
+          - when: any_required_incorrect
+            result: "Requires Correction"
+          - when: any_required_pending_verification
+            result: "Pending Verification"
+          - when: all_required_correct
+            result: "Verified"
 
-module
+      - code: bylaws_amendments
+        name: "Bylaws Amendments (Latest)"
+        required: false
+        fields:
+          - code: upload_latest_bylaws_amendment_corporate_amendment
+            type: file
+            required: true
+        status_rules:
+          - when: any_required_missing
+            result: "Pending Completion"
+          - when: any_required_incorrect
+            result: "Requires Correction"
+          - when: any_required_pending_verification
+            result: "Pending Verification"
+          - when: all_required_correct
+            result: "Verified"
+
+      - code: tax_identification_number
+        name: "Tax Identification Number (Tax ID)"
+        required: true
+        fields:
+          - code: tax_id
+            type: text
+            required: true
+          - code: upload_tax_registration_certificate
+            type: file
+            required: true
+        status_rules:
+          - when: any_required_missing
+            result: "Pending Completion"
+          - when: any_required_incorrect
+            result: "Requires Correction"
+          - when: any_required_pending_verification
+            result: "Pending Verification"
+          - when: all_required_correct
+            result: "Verified"
+
+      - code: standard_industrial_classification
+        name: "Standard Industrial Classification / Business Activity (NAICS/ISIC)"
+        required: false
+        fields:
+          - code: standard_industrial_classification_business_activity_naics_isic
+            type: text
+            required: true
+          - code: primary_business_activity_description
+            type: text
+            required: false
+          - code: upload_tax_cert_or_official_registration
+            type: file
+            required: true
+        status_rules:
+          - when: any_required_missing
+            result: "Pending Completion"
+          - when: any_required_incorrect
+            result: "Requires Correction"
+          - when: any_required_pending_verification
+            result: "Pending Verification"
+          - when: all_required_correct
+            result: "Verified"
+
+      - code: registered_business_address
+        name: "Registered Business Address"
+        required: true
+        fields:
+          - code: street_and_building_number
+            type: text
+            required: true
+          - code: country
+            type: text
+            required: true
+          - code: state
+            type: text
+            required: true
+          - code: city
+            type: text
+            required: true
+          - code: zc
+            type: text
+            required: true
+          - code: upload_tax_address_proof
+            type: file
+            required: true
+        status_rules:
+          - when: any_required_missing
+            result: "Pending Completion"
+          - when: any_required_incorrect
+            result: "Requires Correction"
+          - when: any_required_pending_verification
+            result: "Pending Verification"
+          - when: all_required_correct
+            result: "Verified"
+
+  - code: legal_representation
+    name: "Legal Representation"
+    status_rules:
+      - when: any_required_missing
+        result: "Pending Completion"
+      - when: any_required_incorrect
+        result: "Requires Correction"
+      - when: any_required_pending_verification
+        result: "Pending Verification"
+      - when: all_required_correct
+        result: "Verified"
+    sections:
+      - code: legal_representative_full_name
+        name: "Legal Representative Full Name"
+        required: true
+        fields:
+          - code: first_name
+            type: text
+            required: true
+          - code: middle_name
+            type: text
+            required: false
+          - code: last_name
+            type: text
+            required: true
+        status_rules:
+          - when: any_required_missing
+            result: "Pending Completion"
+          - when: any_required_incorrect
+            result: "Requires Correction"
+          - when: any_required_pending_verification
+            result: "Pending Verification"
+          - when: all_required_correct
+            result: "Verified"
+
+      - code: passport
+        name: "Passport"
+        required: true
+        fields:
+          - code: upload_passport_or_government_idf
+            type: file
+            required: true
+        status_rules:
+          - when: any_required_missing
+            result: "Pending Completion"
+          - when: any_required_incorrect
+            result: "Requires Correction"
+          - when: any_required_pending_verification
+            result: "Pending Verification"
+          - when: all_required_correct
+            result: "Verified"
+
+      - code: representative_tax_identification_number
+        name: "Representative Tax Identification Number (Tax ID)"
+        required: true
+        fields:
+          - code: personal_tax_id
+            type: text
+            required: true
+          - code: upload_personal_tax_registration_certificate_tin_document
+            type: file
+            required: true
+        status_rules:
+          - when: any_required_missing
+            result: "Pending Completion"
+          - when: any_required_incorrect
+            result: "Requires Correction"
+          - when: any_required_pending_verification
+            result: "Pending Verification"
+          - when: all_required_correct
+            result: "Verified"
+
+      - code: legal_title_authority_role
+        name: "Legal Title / Authority Role"
+        required: true
+        fields:
+          - code: legal_title_authority_role
+            type: text
+            required: true
+          - code: upload_power_of_attorney_certificate_of_incumbency
+            type: file
+            required: true
+        status_rules:
+          - when: any_required_missing
+            result: "Pending Completion"
+          - when: any_required_incorrect
+            result: "Requires Correction"
+          - when: any_required_pending_verification
+            result: "Pending Verification"
+          - when: all_required_correct
+            result: "Verified"
+
+      - code: official_representative_contact_email
+        name: "Official Representative Contact Email"
+        required: false
+        fields:
+          - code: official_direct_business_email
+            type: text
+            required: true
+        status_rules:
+          - when: any_required_missing
+            result: "Pending Completion"
+          - when: any_required_incorrect
+            result: "Requires Correction"
+          - when: any_required_pending_verification
+            result: "Pending Verification"
+          - when: all_required_correct
+            result: "Verified"
+
+  - code: business_information
+    name: "Business Information"
+    status_rules:
+      - when: any_required_missing
+        result: "Pending Completion"
+      - when: any_required_incorrect
+        result: "Requires Correction"
+      - when: any_required_pending_verification
+        result: "Pending Verification"
+      - when: all_required_correct
+        result: "Verified"
+    sections:
+      - code: trade_brand_name
+        name: "Trade / Brand Name"
+        required: true
+        fields:
+          - code: trade_brand_name
+            type: text
+            required: true
+          - code: upload_trademark_registration_certificate
+            type: file
+            required: true
+        status_rules:
+          - when: any_required_missing
+            result: "Pending Completion"
+          - when: any_required_incorrect
+            result: "Requires Correction"
+          - when: any_required_pending_verification
+            result: "Pending Verification"
+          - when: all_required_correct
+            result: "Verified"
+
+      - code: official_brand_logo
+        name: "Official Brand Logo"
+        required: false
+        fields:
+          - code: upload_high_resolution_logo
+            type: file
+            required: true
+        status_rules:
+          - when: any_required_missing
+            result: "Pending Completion"
+          - when: any_required_incorrect
+            result: "Requires Correction"
+          - when: any_required_pending_verification
+            result: "Pending Verification"
+          - when: all_required_correct
+            result: "Verified"
+
+      - code: local_tourism_board_license_certificate
+        name: "Local Tourism Board License / Certificate"
+        required: true
+        fields:
+          - code: upload_tourism_license
+            type: file
+            required: true
+        status_rules:
+          - when: any_required_missing
+            result: "Pending Completion"
+          - when: any_required_incorrect
+            result: "Requires Correction"
+          - when: any_required_pending_verification
+            result: "Pending Verification"
+          - when: all_required_correct
+            result: "Verified"
+
+      - code: business_address
+        name: "Business Address"
+        required: true
+        fields:
+          - code: street_and_building_number
+            type: text
+            required: true
+          - code: country
+            type: text
+            required: true
+          - code: state
+            type: text
+            required: true
+          - code: city
+            type: text
+            required: true
+          - code: zc
+            type: text
+            required: true
+          - code: upload_business_address_proof
+            type: file
+            required: true
+        status_rules:
+          - when: any_required_missing
+            result: "Pending Completion"
+          - when: any_required_incorrect
+            result: "Requires Correction"
+          - when: any_required_pending_verification
+            result: "Pending Verification"
+          - when: all_required_correct
+            result: "Verified"
+
+      - code: operational_&_commercial_escalation_phone_numbers
+        name: "Operational & Commercial Escalation Phone Numbers"
+        required: false
+        fields:
+          - code: office_phone_number
+            type: text
+            required: true
+          - code: commercial_sr_manager_phone
+            type: text
+            required: false
+          - code: manager_or_commercial_lead_phone
+            type: text
+            required: false
+          - code: support_phone
+            type: text
+            required: true
+        status_rules:
+          - when: any_required_missing
+            result: "Pending Completion"
+          - when: any_required_incorrect
+            result: "Requires Correction"
+          - when: any_required_pending_verification
+            result: "Pending Verification"
+          - when: all_required_correct
+            result: "Verified"
+
+      - code: emails
+        name: "Emails"
+        required: false
+        fields:
+          - code: commercial_director_email
+            type: text
+            required: true
+          - code: commercial_manager_email
+            type: text
+            required: true
+        status_rules:
+          - when: any_required_missing
+            result: "Pending Completion"
+          - when: any_required_incorrect
+            result: "Requires Correction"
+          - when: any_required_pending_verification
+            result: "Pending Verification"
+          - when: all_required_correct
+            result: "Verified"
+
+      - code: official_social_media_accounts
+        name: "Official Social Media Accounts"
+        required: false
+        fields:
+          - code: facebook
+            type: text
+            required: false
+          - code: instagram
+            type: text
+            required: false
+          - code: tiktok
+            type: text
+            required: false
+          - code: x
+            type: text
+            required: false
+          - code: youtube
+            type: text
+            required: false
+          - code: other_social_network
+            type: text
+            required: false
+        status_rules:
+          - when: any_required_missing
+            result: "Pending Completion"
+          - when: any_required_incorrect
+            result: "Requires Correction"
+          - when: any_required_pending_verification
+            result: "Pending Verification"
+          - when: all_required_correct
+            result: "Verified"

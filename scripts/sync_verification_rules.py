@@ -15,72 +15,77 @@ logger = get_logger("verification_rules")
 
 
 def load_yaml_file(path: Path) -> dict:
-    print(path)
     with open(path, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 
-def validate_status_rules(status_rules: list[dict], file_label: str) -> list[str]:
+def validate_status_rules(status_rules: list[dict], label: str) -> list[str]:
     errores = []
     for regla in status_rules:
         if "when" not in regla or "result" not in regla:
-            errores.append(f"[{file_label}] cada regla necesita 'when' y 'result'")
+            errores.append(f"[{label}] cada regla necesita 'when' y 'result'")
             continue
         if regla["when"] not in CONDITION_REGISTRY:
-            errores.append(
-                f"[{file_label}] condición desconocida: '{regla['when']}'. "
-                f"Disponibles: {list(CONDITION_REGISTRY.keys())}"
-            )
+            errores.append(f"[{label}] condición desconocida: '{regla['when']}'. Disponibles: {list(CONDITION_REGISTRY.keys())}")
     if not any(r.get("when") == "all_required_correct" for r in status_rules):
-        errores.append(f"[{file_label}] advertencia: falta una regla para el caso 'todo correcto'")
+        errores.append(f"[{label}] falta una regla para el caso 'todo correcto'")
     return errores
 
 
-async def sync_section_file(repo, data: dict) -> None:
-    #print(data)
-    module = await repo.upsert_module(code=data["module"],name=data["module"], required=True)
-    section = await repo.upsert_section(module_id=module.id, code=data["code"], name=data["section"], required=True)
+def validate_document(data: dict) -> list[str]:
+    """Recorre TODO el árbol (módulos → secciones → campos) antes de tocar cualquier base de datos."""
+    errores = []
+    for module_data in data.get("modules", []):
+        module_name = module_data.get("name", "<sin nombre>")
+        errores += validate_status_rules(module_data.get("status_rules", []), f"módulo '{module_name}'")
 
-    print(f"section: {section}")
+        for section_data in module_data.get("sections", []):
+            section_name = section_data.get("name", "<sin nombre>")
+            label = f"módulo '{module_name}' / sección '{section_name}'"
+            errores += validate_status_rules(section_data.get("status_rules", []), label)
 
-    yaml_codes = set()
-    for field in data.get("fields", []):
-        print(f"field: {field["code"]}")
-        await repo.upsert_field_rule(
-            section_id=section.id, code=field["code"], type_=field["type"], required=field["required"],
-        )
-        
-        yaml_codes.add(field["code"])
+            codes_seen = set()
+            for field in section_data.get("fields", []):
+                code = field.get("code")
+                if code in codes_seen:
+                    errores.append(f"[{label}] código de campo repetido: '{code}'")
+                codes_seen.add(code)
 
-    # Campos que ya no están en el YAML: se desactivan, nunca se borran
-    for existing_field in await repo.get_field_rules(section.id):
-        if existing_field.code not in yaml_codes:
-            await repo.deactivate_field_rule(existing_field.id)
-            logger.info(f"Campo desactivado: section={data['section']} code={existing_field.code}")
-
-    await repo.replace_section_status_rules(section.id, data["status_rules"])
+    return errores
 
 
-async def sync_module_file(repo, data: dict) -> None:
-    module = await repo.upsert_module(code=data["code"],name=data["module"], required=True)
-    print(module)
-    await repo.replace_module_status_rules(module.id, data["status_rules"])
+async def sync_module(repo, module_data: dict) -> None:
+    module = await repo.upsert_module(name=module_data["name"], code=module_data["code"], required=True)
+    await repo.replace_module_status_rules(module.id, module_data["status_rules"])
+
+    for section_data in module_data.get("sections", []):
+        section = await repo.upsert_section(module_id=module.id, name=section_data["name"], code=section_data["code"], required=section_data.get("required", True))
+
+        yaml_codes = set()
+        for field in section_data.get("fields", []):
+            await repo.upsert_field_rule(
+                section_id=section.id, code=field["code"], type_=field["type"], required=field["required"],
+            )
+            yaml_codes.add(field["code"])
+
+        for existing_field in await repo.get_field_rules(section.id):
+            if existing_field.code not in yaml_codes:
+                await repo.deactivate_field_rule(existing_field.id)
+                logger.info(f"Campo desactivado: section={section_data['name']} code={existing_field.code}")
+
+        await repo.replace_section_status_rules(section.id, section_data["status_rules"])
 
 
-async def main(files: list[Path], domains: list[str] | None):
-    # --- 1. Validar TODOS los archivos antes de tocar cualquier base de datos ---
-    parsed_files = []
-    for path in files:
-        data = load_yaml_file(path)
-        errores = validate_status_rules(data.get("status_rules", []), path.name)
-        if errores:
-            for e in errores:
-                print(f"ERROR DE VALIDACIÓN: {e}")
-            print(f"Se cancela toda la sincronización por errores en {path.name}")
-            return
-        parsed_files.append(data)
+async def main(file_path: Path, domains: list[str] | None):
+    data = load_yaml_file(file_path)
 
-    # --- 2. Resolver a qué tenants aplica ---
+    errores = validate_document(data)
+    if errores:
+        for e in errores:
+            print(f"ERROR DE VALIDACIÓN: {e}")
+        print("Se cancela la sincronización por errores en el archivo")
+        return
+
     async with get_control_db_session_standalone() as control_session:
         tenant_repo = SqlAlchemyTenantRepository(control_session)
         if domains:
@@ -94,18 +99,14 @@ async def main(files: list[Path], domains: list[str] | None):
         else:
             tenants = await tenant_repo.list_by_status(TenantStatus.ACTIVE)
 
-    # --- 3. Aplicar, tenant por tenant, TODOS los archivos juntos en una sola transacción ---
     for tenant in tenants:
         try:
             sessionmaker = await engine_factory.get_sessionmaker(tenant)
             async with sessionmaker() as session:
                 repo = SqlAlchemyVerificationRuleRepository(session)
-                for data in parsed_files:
-                    if "section" in data:
-                        await sync_section_file(repo, data)
-                    else:
-                        await sync_module_file(repo, data)
-                await session.commit()
+                for module_data in data.get("modules", []):
+                    await sync_module(repo, module_data)
+                await session.commit()   # TODOS los módulos del archivo, para este tenant: todo o nada
             print(f"OK: {tenant.domain}")
             logger.info(f"Sincronización OK: domain={tenant.domain}")
         except Exception as e:
@@ -117,11 +118,10 @@ async def main(files: list[Path], domains: list[str] | None):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Sincroniza reglas de verificación (módulos/secciones) desde YAML")
-    parser.add_argument("--files", required=True, help="Rutas de archivos YAML, separadas por coma")
+    parser = argparse.ArgumentParser(description="Sincroniza TODAS las reglas de verificación desde un solo archivo YAML")
+    parser.add_argument("--file", required=True, help="Ruta al archivo YAML único con todos los módulos/secciones")
     parser.add_argument("--domains", help="Dominios separados por coma. Si se omite, corre en TODOS los tenants activos")
     args = parser.parse_args()
 
-    urls = [Path(f.strip()) for f in args.files.split(",")]
     domains = args.domains.split(",") if args.domains else None
-    asyncio.run(main(urls, domains))
+    asyncio.run(main(Path(args.file), domains))
