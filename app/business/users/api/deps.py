@@ -1,5 +1,6 @@
 # app/business/users/api/deps.py
 from fastapi import Depends, HTTPException, Header
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.tenants.api.deps import get_tenant_db_session
 from app.business.users.infrastructure.repository_sqlalchemy import SqlAlchemyUserRepository
@@ -8,14 +9,17 @@ from app.business.operators.domain.entities import Operator
 from app.core.security import decode_access_token
 
 
+bearer_scheme = HTTPBearer()
+
+
 async def get_current_user_and_operator(
-    authorization: str = Header(...),
+    credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
+    #authorization: str = Header(...),
     session: AsyncSession = Depends(get_tenant_db_session),
 ) -> Operator:
-    if not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Token faltante o con formato incorrecto")
-
-    token = authorization.removeprefix("Bearer ")
+    token = credentials.credentials
+    
+    #token = authorization.removeprefix("Bearer ")
     try:
         payload = decode_access_token(token)
     except ValueError as e:

@@ -14,7 +14,7 @@ from app.business.verification.domain.exceptions import (
     VerificationModuleNotFoundError, SectionNotFoundError, FieldNotFoundError, InvalidFieldPayloadError,
 )
 from app.business.verification.application.build_operator_overview import BuildOperatorOverviewService
-from .schemas import SaveFieldAnswerRequest, SaveFieldAnswerResponse, SavedFieldAnswersBatchResponse, SaveFieldAnswersBatchRequest
+from .schemas import SaveFieldAnswerRequest, SaveFieldAnswerResponse, SavedFieldAnswersBatchResponse, SaveFieldAnswersBatchRequest, SectionSummary, ModuleSectionResponse
 from app.business.verification.api.schemas import OperatorOverviewResponse, OverviewRequest
 
 from app.business.verification.application.batch_save_field_answers import BatchSaveFieldAnswerService
@@ -37,13 +37,29 @@ async def get_modules(
 @router.get("/get_module_sections/{module_id}")
 async def get_module_sections(
     module_id: int,
+    operator: Operator = Depends(get_current_user_and_operator),
     session: AsyncSession = Depends(get_tenant_db_session)
 ):
     rules_repo = SqlAlchemyVerificationRuleRepository(session)
-    data = await rules_repo.get_sections_by_module(module_id)
+    answers_repo = SqlAlchemyVerificationAnswersRepository(session)
+    
+    module = await rules_repo.get_module_by_id(module_id)
+    print(f"module: {module}")
+    if module is None:
+        raise HTTPException(status_code=404, detail=f"No existe el módulo {module_id}")
+    evaluator = CompositeStatusEvaluator(rules_repo, answers_repo)
+    sections = []
+    for section in await rules_repo.get_sections_by_module(module_id):
+        status = await evaluator.evaluate_section(operator.id, section.id)
+        sections.append(SectionSummary(
+            name=section.name,
+            required=section.required,
+            status=status
+        ))
+    
     return {
         "status": 200,
-        "data": data
+        "data": ModuleSectionResponse(module=module.name, sections=sections)
     }
 
     

@@ -74,3 +74,12 @@ class ModuleOverview(BaseModel):
     
 class OperatorOverviewResponse(BaseModel):
     modules: list[ModuleOverview]
+    
+class SectionSummary(BaseModel):
+    name: str
+    required: bool
+    status: str
+    
+class ModuleSectionResponse(BaseModel):
+    module: str
+    sections: list[SectionSummary]
