@@ -149,3 +149,11 @@ class BusinessActivity(Base):
     name = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)
     
+
+class SectionFieldFileTypeModel(Base):
+    __tablename__="section_field_file_types"
+    id=Column(Integer,primary_key=True)
+    section_field_rule_id = Column(Integer, ForeignKey("section_field_rules.id", ondelete='CASCADE'), nullable=False, index=True)
+    catalog_type_file_id = Column(Integer, ForeignKey("catalog_types_files.id", ondelete="RESTRICT"),nullable=False, index=True,)
+    
+    __table_args__ = (UniqueConstraint("section_field_rule_id", "catalog_type_file_id", name="uq_field_file_type"),)

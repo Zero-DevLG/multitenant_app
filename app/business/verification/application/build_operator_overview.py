@@ -41,7 +41,7 @@ class BuildOperatorOverviewService:
             for section in sections:
                 field_rules = await self._rules_repo.get_field_rules(section.id)
                 fields_payload = [
-                    self._build_field(rule,  answer_by_field_id.get(rule.id), references_by_id ,files_by_id, addresses_by_id)
+                    await self._build_field(rule,  answer_by_field_id.get(rule.id), references_by_id ,files_by_id, addresses_by_id)
                     for rule in field_rules
                 ]
                 
@@ -58,13 +58,16 @@ class BuildOperatorOverviewService:
             })
         return {"modules": modules_payload}
     
-    def _build_field(self, rule, answer, references_by_id, files_by_id, addresses_by_id) -> dict:
+    async def _build_field(self, rule, answer, references_by_id, files_by_id, addresses_by_id) -> dict:
         base = {
             "code": rule.code, "type": rule.type, "required": rule.required,
             "validation_state": answer.validation_state if answer else "missing",
             "observations": answer.observations if answer else None,
             "value": None
         }
+        
+        if rule.type == "file":
+            base["allowed_file_types"] = await self._rules_repo.get_field_file_types(rule.id)
         
         if answer is None or answer.reference_id is None:
             if answer and rule.type == "text":

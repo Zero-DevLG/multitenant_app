@@ -63,10 +63,19 @@ async def sync_module(repo, module_data: dict) -> None:
 
         yaml_codes = set()
         for field in section_data.get("fields", []):
-            await repo.upsert_field_rule(
+            field_rule = await repo.upsert_field_rule(
                 section_id=section.id, code=field["code"], type_=field["type"], required=field["required"],
             )
             yaml_codes.add(field["code"])
+            
+            if field["type"] == "file" and "file_types" in field:
+                catalog_ids = []
+                for key in field["file_types"]:
+                    catalog_id = await repo.get_catalog_type_file_by_key(key)
+                    if catalog_id is None:
+                        raise ValueError(f"El catalogo de archivos no tiene ninguna entrada con key: {key} en este tenant")
+                    catalog_ids.append(catalog_id)
+                await repo.replace_field_file_types(field_rule.id, catalog_ids)
 
         for existing_field in await repo.get_field_rules(section.id):
             if existing_field.code not in yaml_codes:

@@ -3,7 +3,16 @@ from app.business.verification.domain.entities import Modules, Sections, FieldRu
 from .entities import Answer, ReferenceAnswer, Document, Address, AnswerHistoryEntry, FileDetail, AddressDetail
 
 class VerificationRulesRepository(ABC):
-    # Lectura para armar jerarquia 
+    # Lectura para armar jerarquia
+    @abstractmethod
+    async def get_catalog_type_file_by_key(self, key:str) -> int | None: ...
+    
+    @abstractmethod
+    async def get_field_file_types(self, field_rule_id: int) -> list[dict]: ...
+    
+    @abstractmethod
+    async def replace_field_file_types(self, field_rule_id: int, catalog_type_file_ids: list[int]) -> None: ...
+    
     @abstractmethod
     async def get_all_modules(self) -> list[Modules]: ... 
     

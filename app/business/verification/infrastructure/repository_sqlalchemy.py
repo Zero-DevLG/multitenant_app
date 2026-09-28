@@ -11,7 +11,10 @@ from app.business.verification.infrastructure.models import (
     OperatorFieldAnswerModel,
     OperatorFieldAnswerHistoryModel,
     ReferenceAnswerModel,
+    SectionFieldFileTypeModel
 )
+
+from app.business.operators.models.model import CatalogTypeFiles
 
 from app.business.verification.domain.repository import VerificationAnswersRepository
 from app.business.verification.domain.entities import Answer, Document, Address, AnswerHistoryEntry, FileDetail, AddressDetail
@@ -51,6 +54,16 @@ class SqlAlchemyVerificationRuleRepository(VerificationRulesRepository):
         self._session = session
         
     # Lectura
+    
+    async def get_catalog_type_file_by_key(self, key: str) -> int | None:
+        result = await self._session.execute(select(CatalogTypeFiles.id).where(CatalogTypeFiles.key==key))
+        return result.scalar_one_or_none()
+    
+    async def get_field_file_types(self, field_rule_id: int) -> list[dict]:
+        result = await self._session.execute(
+            select(CatalogTypeFiles).join(SectionFieldFileTypeModel, SectionFieldFileTypeModel.catalog_type_file_id ==CatalogTypeFiles.id).where(SectionFieldFileTypeModel.section_field_rule_id == field_rule_id)
+        )
+        return [{"id": c.id, "key": c.key, "name": c.name} for c in result.scalars().all()]
     
     async def get_module_by_id(self, module_id: int) -> Modules:
         result = await self._session.execute(select(ModuleModel).where(ModuleModel.id == module_id))
@@ -132,6 +145,16 @@ class SqlAlchemyVerificationRuleRepository(VerificationRulesRepository):
         return [_status_rule_to_entity(r) for r in result.scalars()]
     
     # Escritura 
+    
+    async def replace_field_file_types(self, field_rule_id: int, catalog_type_file_ids: int):
+        await self._session.execute(
+            delete(SectionFieldFileTypeModel).where(SectionFieldFileTypeModel.section_field_rule_id == field_rule_id)
+        )
+        
+        for catalog_id in catalog_type_file_ids:
+            self._session.add(SectionFieldFileTypeModel(section_field_rule_id=field_rule_id, catalog_type_file_id=catalog_id))
+        await self._session.flush()
+    
     
     async def upsert_module(self, name: str, code: str, required: bool) -> Modules:
         existing = await self.get_module_by_code(code)

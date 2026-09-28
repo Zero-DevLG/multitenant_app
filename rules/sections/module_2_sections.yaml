@@ -21,6 +21,7 @@ modules:
             required: true
           - code: upload_tax_certification_official_tax_registration
             type: file
+            file_types: ["TXC"]
             required: true
         status_rules:
           - when: any_required_missing
@@ -55,6 +56,7 @@ modules:
         fields:
           - code: upload_articles_of_incorporation_original_corporate_bylaws
             type: file
+            file_types: ["AOI"]
             required: true
         status_rules:
           - when: any_required_missing
@@ -72,6 +74,7 @@ modules:
         fields:
           - code: upload_latest_bylaws_amendment_corporate_amendment
             type: file
+            file_types: ["LBA"]
             required: true
         status_rules:
           - when: any_required_missing
@@ -92,6 +95,7 @@ modules:
             required: true
           - code: upload_tax_registration_certificate
             type: file
+            file_types: ["TRC"]
             required: true
         status_rules:
           - when: any_required_missing
@@ -115,6 +119,7 @@ modules:
             required: false
           - code: upload_tax_cert_or_official_registration
             type: file
+            file_types: ["TRC"]
             required: true
         status_rules:
           - when: any_required_missing
@@ -147,6 +152,7 @@ modules:
             required: true
           - code: upload_tax_address_proof
             type: file
+            file_types: ["TAP"]
             required: true
         status_rules:
           - when: any_required_missing
@@ -199,6 +205,7 @@ modules:
         fields:
           - code: upload_passport_or_government_idf
             type: file
+            file_types: ["PID"]
             required: true
         status_rules:
           - when: any_required_missing
@@ -219,6 +226,7 @@ modules:
             required: true
           - code: upload_personal_tax_registration_certificate_tin_document
             type: file
+            file_types: ["PTR"]
             required: true
         status_rules:
           - when: any_required_missing
@@ -239,6 +247,7 @@ modules:
             required: true
           - code: upload_power_of_attorney_certificate_of_incumbency
             type: file
+            file_types: ["POA"]
             required: true
         status_rules:
           - when: any_required_missing
@@ -288,6 +297,7 @@ modules:
             required: true
           - code: upload_trademark_registration_certificate
             type: file
+            file_types: ["TMC"]
             required: true
         status_rules:
           - when: any_required_missing
@@ -305,6 +315,7 @@ modules:
         fields:
           - code: upload_high_resolution_logo
             type: file
+            file_types: ["HRL"]
             required: true
         status_rules:
           - when: any_required_missing
@@ -322,6 +333,7 @@ modules:
         fields:
           - code: upload_tourism_license
             type: file
+            file_types: ["TLN"]
             required: true
         status_rules:
           - when: any_required_missing
@@ -354,6 +366,7 @@ modules:
             required: true
           - code: upload_business_address_proof
             type: file
+            file_types: ["TAP"]
             required: true
         status_rules:
           - when: any_required_missing
