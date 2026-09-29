@@ -9,12 +9,14 @@ class BuildOperatorOverviewService:
     async def build(self, operator_id: int, module_id: int | None = None, section_id: int | None = None) -> dict:
         print(f"datos: {module_id}, {section_id}")
         all_answers = await self._answers_repo.get_all_answers_for_operator(operator_id)
+        #print(all_answers)
         answer_by_field_id = {a.section_field_rule_id: a for a in all_answers}
+        #print(answer_by_field_id)
         
         reference_ids = [a.reference_id for a in all_answers if a.reference_id]
         references_by_id = await self._answers_repo.get_reference_answers_by_ids(reference_ids)
         
-        print(f"references {references_by_id}")
+        #print(f"references {references_by_id}")
         
         file_ids = [r.file_id for r in references_by_id.values() if r.file_id]
         address_ids = [r.address_id for r in references_by_id.values() if r.address_id]
@@ -31,7 +33,7 @@ class BuildOperatorOverviewService:
         else:
             modules = await self._rules_repo.get_all_modules()
             
-        print(f"Modulos requeridos:{modules}")
+        #print(f"Modulos requeridos:{modules}")
         for module in modules :
             section_payload = []
             if section_id:
@@ -40,6 +42,9 @@ class BuildOperatorOverviewService:
                 sections = await self._rules_repo.get_sections_by_module(module.id)
             for section in sections:
                 field_rules = await self._rules_repo.get_field_rules(section.id)
+                print(f"field_rules: {field_rules}")
+                print("Compendio:")
+                print(answer_by_field_id)
                 fields_payload = [
                     await self._build_field(rule,  answer_by_field_id.get(rule.id), references_by_id ,files_by_id, addresses_by_id)
                     for rule in field_rules
@@ -59,12 +64,17 @@ class BuildOperatorOverviewService:
         return {"modules": modules_payload}
     
     async def _build_field(self, rule, answer, references_by_id, files_by_id, addresses_by_id) -> dict:
+        print("construyendo campo")
+        print(f"rule: {rule}")
+        print(f"answer: {answer}")
+        
         base = {
             "code": rule.code, "type": rule.type, "required": rule.required,
             "validation_state": answer.validation_state if answer else "missing",
             "observations": answer.observations if answer else None,
             "value": None
         }
+        
         
         if rule.type == "file":
             data = await self._rules_repo.get_field_file_types(rule.id)
@@ -74,7 +84,7 @@ class BuildOperatorOverviewService:
         
         if answer is None or answer.reference_id is None:
             if answer and rule.type == "text":
-                base["value"] == answer.value_text
+                base["value"] = answer.value_text
             return base
         
         ref = references_by_id.get(answer.reference_id)
@@ -82,6 +92,7 @@ class BuildOperatorOverviewService:
             return base
         
         if rule.type == "text":
+            #print("---------------ENTRO-----------")
             base["value"] = answer.value_text
         elif rule.type == "file" and ref.file_id:
             doc = files_by_id.get(ref.file_id)
