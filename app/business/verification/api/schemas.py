@@ -76,6 +76,7 @@ class OperatorOverviewResponse(BaseModel):
     modules: list[ModuleOverview]
     
 class SectionSummary(BaseModel):
+    id: int
     name: str
     required: bool
     status: str

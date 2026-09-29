@@ -52,6 +52,7 @@ async def get_module_sections(
     for section in await rules_repo.get_sections_by_module(module_id):
         status = await evaluator.evaluate_section(operator.id, section.id)
         sections.append(SectionSummary(
+            id=section.id,
             name=section.name,
             required=section.required,
             status=status
