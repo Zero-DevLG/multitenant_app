@@ -59,11 +59,12 @@ class SqlAlchemyVerificationRuleRepository(VerificationRulesRepository):
         result = await self._session.execute(select(CatalogTypeFiles.id).where(CatalogTypeFiles.key==key))
         return result.scalar_one_or_none()
     
-    async def get_field_file_types(self, field_rule_id: int) -> list[dict]:
+    async def get_field_file_types(self, field_rule_id: int) -> dict:
         result = await self._session.execute(
             select(CatalogTypeFiles).join(SectionFieldFileTypeModel, SectionFieldFileTypeModel.catalog_type_file_id ==CatalogTypeFiles.id).where(SectionFieldFileTypeModel.section_field_rule_id == field_rule_id)
         )
-        return [{"id": c.id, "key": c.key, "name": c.name} for c in result.scalars().all()]
+        data = result.scalar_one_or_none()
+        return {"id": data.id, "key": data.key, "name": data.name} 
     
     async def get_module_by_id(self, module_id: int) -> Modules:
         result = await self._session.execute(select(ModuleModel).where(ModuleModel.id == module_id))

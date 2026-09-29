@@ -67,7 +67,10 @@ class BuildOperatorOverviewService:
         }
         
         if rule.type == "file":
-            base["allowed_file_types"] = await self._rules_repo.get_field_file_types(rule.id)
+            data = await self._rules_repo.get_field_file_types(rule.id)
+            base["type_file_id"] = data.get('id')
+            base["type_file_key"] = data.get('key')
+            base["name_file"] = data.get("name")
         
         if answer is None or answer.reference_id is None:
             if answer and rule.type == "text":
